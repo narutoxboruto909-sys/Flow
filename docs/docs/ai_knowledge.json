@@ -1,0 +1,135 @@
+{
+  "greetings": {
+    "patterns": [
+      "hello",
+      "hi",
+      "hey",
+      "greetings",
+      "good morning",
+      "good afternoon"
+    ],
+    "responses": [
+      "Hello! I'm SmartLearner. How can I help you?",
+      "Hi there! I'm SmartLearner. What would you like to know?",
+      "Greetings! I'm here to assist you."
+    ],
+    "type": "builtin"
+  },
+  "farewells": {
+    "patterns": [
+      "bye",
+      "goodbye",
+      "exit",
+      "quit",
+      "see you",
+      "good night"
+    ],
+    "responses": [
+      "Goodbye! Have a great day!",
+      "See you later! Feel free to come back anytime.",
+      "Farewell! I'll be here if you need me."
+    ],
+    "type": "builtin"
+  },
+  "capabilities": {
+    "patterns": [
+      "what can you do",
+      "help",
+      "abilities",
+      "your functions"
+    ],
+    "responses": [
+      "I can answer questions, perform calculations, tell time, and I learn new things from you!",
+      "My capabilities include: answering questions, math operations, time telling, and learning from our conversations."
+    ],
+    "type": "builtin"
+  },
+  "math": {
+    "patterns": [
+      "calculate",
+      "math",
+      "add",
+      "subtract",
+      "multiply",
+      "divide",
+      "sum",
+      "plus",
+      "minus"
+    ],
+    "responses": [],
+    "function": "math_handler",
+    "type": "builtin"
+  },
+  "time": {
+    "patterns": [
+      "time",
+      "date",
+      "day",
+      "what time",
+      "current time"
+    ],
+    "responses": [],
+    "function": "time_handler",
+    "type": "builtin"
+  },
+  "thanks": {
+    "patterns": [
+      "thank you",
+      "thanks",
+      "appreciate",
+      "grateful"
+    ],
+    "responses": [
+      "You're welcome!",
+      "Happy to help!",
+      "My pleasure!"
+    ],
+    "type": "builtin"
+  },
+  "creator": {
+    "patterns": [
+      "who created you",
+      "who made you",
+      "your creator",
+      "who built you"
+    ],
+    "responses": [
+      "I was created by my developer to help people like you!",
+      "I'm an AI assistant created to be helpful and informative."
+    ],
+    "type": "builtin"
+  },
+  "commands": {
+    "patterns": [
+      "commands",
+      "help menu",
+      "what commands"
+    ],
+    "responses": [],
+    "function": "show_commands_handler",
+    "type": "builtin"
+  },
+  "learned_1": {
+    "patterns": [
+      "who am i"
+    ],
+    "responses": [
+      "you are \"Gey\""
+    ],
+    "learned_on": "2026-02-09T12:05:52.619838",
+    "original_question": "who am i",
+    "type": "learned"
+  },
+  "learned_2": {
+    "patterns": [
+      "what am i learning",
+      "what am i"
+    ],
+    "responses": [
+      "you are learning German,English and Math"
+    ],
+    "learned_on": "2026-02-09T12:06:41.888535",
+    "original_question": "what am i learning",
+    "type": "learned"
+  }
+}

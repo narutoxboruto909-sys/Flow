@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AI Assistant - Web Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/ai-web-app/static/css/style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>AI Assistant</h1>
+                </div>
+                <div class="ai-info">
+                    <span class="ai-name" id="aiName">Loading AI...</span>
+                    <div class="stats" id="aiStats">
+                        <span class="stat-item"><i class="fas fa-brain"></i> <span id="learnedCount">0</span> learned</span>
+                        <span class="stat-item"><i class="fas fa-database"></i> <span id="totalKnowledge">0</span> total</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="newChatBtn">
+                        <i class="fas fa-plus"></i> New Chat
+                    </button>
+                    <button class="btn btn-outline" id="teachBtn">
+                        <i class="fas fa-graduation-cap"></i> Teach AI
+                    </button>
+                    <button class="btn btn-primary" id="commandsBtn">
+                        <i class="fas fa-question-circle"></i> Commands
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <div class="chat-container">
+            <!-- Sidebar for mobile -->
+            <div class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-history"></i> Chat History</h3>
+                    <button class="btn-icon" id="closeSidebar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="sessions-list" id="sessionsList">
+                    <div class="session-item active" data-session="default">
+                        <i class="fas fa-comment"></i>
+                        <span>Current Chat</span>
+                    </div>
+                    <!-- Sessions will be loaded here -->
+                </div>
+                <div class="sidebar-footer">
+                    <div class="learned-questions">
+                        <h4><i class="fas fa-lightbulb"></i> Learned Questions</h4>
+                        <div class="questions-list" id="questionsList">
+                            <p class="empty-message">No questions learned yet. Start teaching!</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Messages -->
+            <main class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome message -->
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                <p>Hello! I'm your AI Assistant. I can answer questions, perform calculations, tell time, and learn from you! Ask me anything, and if I don't know, I'll ask you to teach me.</p>
+                                <p><strong>Try asking:</strong></p>
+                                <ul class="suggestion-list">
+                                    <li>"What time is it?"</li>
+                                    <li>"Calculate 15 + 27"</li>
+                                    <li>"What can you do?"</li>
+                                    <li>Anything you want me to learn!</li>
+                                </ul>
+                            </div>
+                            <div class="message-time" id="welcomeTime"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-container">
+                        <div class="input-actions">
+                            <button class="btn-icon" id="micBtn" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="btn-icon" id="attachBtn" title="Attach File">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message here... (Shift+Enter for new line, Enter to send)" 
+                            rows="1"
+                            autofocus
+                        ></textarea>
+                        <div class="input-actions">
+                            <button class="btn-icon" id="clearBtn" title="Clear Input">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="btn-send" id="sendBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-hints">
+                        <span class="hint"><i class="fas fa-lightbulb"></i> Tip: Ask anything! I learn from you.</span>
+                        <span class="hint" id="learningModeHint" style="display: none;">
+                            <i class="fas fa-graduation-cap"></i> <strong>Teaching Mode:</strong> I'm waiting for you to teach me the answer!
+                        </span>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="connection-status">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Connecting...</span>
+                </div>
+                <div class="footer-info">
+                    <span>AI Assistant v1.0</span>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="teachModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-graduation-cap"></i> Teach the AI</h3>
+                <button class="btn-icon close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="teachQuestion">Question</label>
+                    <input type="text" id="teachQuestion" placeholder="What is Python?">
+                </div>
+                <div class="form-group">
+                    <label for="teachAnswer">Answer</label>
+                    <textarea id="teachAnswer" placeholder="Python is a programming language..." rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="form-hint">
+                        <i class="fas fa-info-circle"></i> This will be saved to the AI's knowledge permanently.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" id="saveTeaching">Save to AI</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="commandsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-question-circle"></i> Available Commands</h3>
+                <button class="btn-icon close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="commands-list">
+                    <div class="command-item">
+                        <div class="command-header">
+                            <i class="fas fa-comment"></i>
+                            <h4>Chat</h4>
+                        </div>
+                        <p>Just type your message and press Enter to chat with the AI.</p>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-header">
+                            <i class="fas fa-plus"></i>
+                            <h4>New Chat</h4>
+                        </div>
+                        <p>Start a fresh conversation. Previous chats are saved in history.</p>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-header">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h4>Teach AI</h4>
+                        </div>
+                        <p>Manually teach the AI a question and answer pair.</p>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-header">
+                            <i class="fas fa-chart-bar"></i>
+                            <h4>View Stats</h4>
+                        </div>
+                        <p>See how many questions the AI has learned and other statistics.</p>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-header">
+                            <i class="fas fa-history"></i>
+                            <h4>Chat History</h4>
+                        </div>
+                        <p>View and switch between previous conversations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary close-modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

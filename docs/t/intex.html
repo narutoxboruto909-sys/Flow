@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>StudyHub – Interactive Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic Hidden Utility */
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 text-white min-h-screen font-sans">
+    
+    <!-- Header Section -->
+    <header class="p-6 flex justify-between items-center bg-slate-800 shadow-lg">
+        <h1 class="text-4xl font-bold text-indigo-400">📘 StudyHub</h1>
+        <button onclick="toggleDarkMode()" class="bg-indigo-600 p-3 rounded-md hover:bg-indigo-500 transition-all">Toggle Dark Mode</button>
+    </header>
+
+    <!-- Main Section for Subjects -->
+    <section id="subjects" class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 pb-20">
+        <div onclick="openSubject('Math')" class="cursor-pointer bg-slate-700/40 hover:bg-slate-700 p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-semibold">➗ Math</h3>
+        </div>
+        <div onclick="openSubject('Physics')" class="cursor-pointer bg-slate-700/40 hover:bg-slate-700 p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-semibold">⚛️ Physics</h3>
+        </div>
+        <div onclick="openSubject('English')" class="cursor-pointer bg-slate-700/40 hover:bg-slate-700 p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-semibold">🇬🇧 English</h3>
+        </div>
+        <div onclick="openSubject('German')" class="cursor-pointer bg-slate-700/40 hover:bg-slate-700 p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-semibold">🇩🇪 German</h3>
+        </div>
+        <div onclick="openSubject('Coding')" class="cursor-pointer bg-slate-700/40 hover:bg-slate-700 p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-semibold">💻 Coding</h3>
+        </div>
+    </section>
+
+    <!-- Subject View Section -->
+    <section id="subjectView" class="hidden px-6 pb-20">
+        <button onclick="backToSubjects()" class="mb-6 text-slate-300 hover:text-white">← Back</button>
+        <h2 id="subjectTitle" class="text-3xl font-bold mb-6"></h2>
+        <div id="categoryList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+
+        <!-- Lesson View Section -->
+        <div id="lessonView" class="hidden">
+            <button onclick="backToCategories()" class="mb-6 text-slate-300 hover:text-white">← Back to topics</button>
+            <div id="lessonContent"></div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="p-6 text-center text-slate-400 bg-slate-800 mt-12">
+        <p>&copy; 2026 StudyHub – All Rights Reserved</p>
+    </footer>
+
+
+
+
+    <script>
+      const data = {
+                        Math: {
+    'Bo‘lim 1: Sonlar va amallar': ['Sonlar va amallar','Butun sonlar','Kasrlar va o‘nli sonlar','Foizlar','Darajalar','Tenglamalar va tengsizliklar','Matnli masalalar'],
+    'Bo‘lim 2: Algebraik ifodalar': ['Ratsional ifodalar','Kvadrat ildizlar','Chiziqli tenglamalar','Chiziqli tengsizliklar','Tenglamalar sistemasi','Funksiya tushunchasi','Chiziqli funksiya'],
+    'Bo‘lim 3: Ilg‘or algebra': ['Kvadrat tenglamalar','Kvadrat funksiyalar','Ildizli ifodalar','Ratsional tenglamalar','Tengsizliklar sistemasi','Progressiyalar','Kombinatorika asoslari','Algebraik ifodalarni soddalashtirish','Ko‘rsatkichli funksiya','Logarifm va logarifmik funksiya','Hosila tushunchasi','Funksiyalarni tekshirish','Hosilaning qo‘llanilishi','Integral tushunchasi','Aniqlanmagan integral','Aniqlangan integral','Integral yordamida yuza topish','Ehtimollik nazariyasi'],
+    'Geometriya': ['Uchburchaklar tengligi','Pifagor teoremasi','Geometrik figuralar','Kesma, nur, to‘g‘ri chiziq','Burchaklar','Uchburchaklar','To‘rtburchaklar','Aylana va doira','Perimetr va yuza','To‘rtburchaklar','Parallel chiziqlar','Aylana va unga oid teoremalar','Uchburchaklar o‘xshashligi','Aylana va doira','Ko‘pburchaklar','Yuza formulalari','Fazoviy figuralar: prizma, piramida','Silindr, konus, shar','Hajm va sirt yuzalari','Fazoda vektorlar','To‘g‘ri chiziq va tekislik','Masofa va burchaklar','Fazoviy masalalar']
+   },
+  Physics: {
+    'Bo‘lim 1: Fizika va o‘lchovlar': ['Fizika predmeti va metodlari','Massa, hajm, zichlik'],
+    'Bo‘lim 2: Harakat va kuch': ['Harakat va tezlik','Kuch va uning o‘lchovi','Og‘irlik kuchi'],
+    'Bo‘lim 3: Ish, quvvat va energiya': ['Ish va quvvat','Kinetik va potentsial energiya','Oddiy mexanik mashinalar (arqon, g‘ildirak, kaldirg‘och)'],
+    'Bo‘lim 4: Suyuq va gazlar xossalari': ['Suyuq va gazlarning harakat xossalari','Suv va havo bosimi','Harorat va issiqlik'],
+    'Bo‘lim 5: Kuch va harakat qonunlari': ['Nyuton qonunlari','Og‘ish va tortishish kuchi','Harakatning tezlashishi'],
+    'Bo‘lim 6: To‘lqin va sado': ['Mekanik tebranishlar','To‘lqin turlari','Tovush va uning xossalari'],
+    'Bo‘lim 7: Elektr va magnit': ['Elektr zaryadi va elektr maydon','Tok kuchi, kuchlanish, qarshilik (Ohm qonuni)','Elektr energiyasi va quvvati','Magnetizm va magnit maydon','Elektromagnit induksiya'],
+    'Bo‘lim 8: Optika': ['Yorug‘lik, aks va singish','To‘lqinlar va ularning xossalari','Fotoeffekt'],
+    'Bo‘lim 9: Atom va yadroviy fizika': ['Atom va molekula tuzilishi','Atom fizikasi','Radioaktivlik va yadroviy reaksiyalar'],
+    'Bo‘lim 10: Termodinamika': ['Harorat va issiqlik nazariyasi','Termodinamika qonunlari','Entropiya']
+  },
+   
+  English: {
+    'Beginner': ['Nouns (Ismlar)','Pronouns (Olmoshlar)','Articles (a, an, the)','Verbs: Present Simple, Past Simple','Adjectives & Adverbs','Prepositions','Simple questions & negations'],
+    'Intermediate': ['Present Continuous / Past Continuous / Future Simple','Modal Verbs','Comparatives & Superlatives','Countable & uncountable nouns','Phrasal Verbs','Conditionals: Zero & First','Possessives, reflexive pronouns','Reported Speech (simple statements)'],
+    'Advanced': ['Perfect Tenses','Conditionals: Second, Third & Mixed','Passive Voice','Relative Clauses','Gerunds & Infinitives','Reported Speech (questions & commands)','Idioms & complex phrasal verbs','Subjunctive / hypothetical structures']
+  },
+  German: {
+    'Beginner': ['Nomen & Artikel','Personalpronomen','Präsens','Simple sentence structure','Basic adjectives & adverbs','Negation'],
+    'Intermediate': ['Präteritum & Perfekt','Modalverben','Reflexive pronouns','Comparatives & Superlatives','Prepositions with Akkusativ / Dativ','Separable & inseparable verbs','Nebensätze'],
+    'Advanced': ['Plusquamperfekt & Futur I / II','Konjunktiv I & II','Passive Voice','Adjektivdeklination','Complex sentence structures & word order','Idioms & advanced expressions','Partizipien & Perfekt usage']
+  },
+  Coding: {
+    HTML: {
+      'Beginner': ['HTML structure','Basic tags','Attributes','Links and images','Lists and tables'],
+      'Intermediate': ['Forms','Semantic HTML5 tags','Multimedia','Meta tags','HTML entities'],
+      'Advanced': ['HTML APIs','Custom data attributes','Accessibility','Microdata and structured data']
+    },
+    CSS: {
+      'Beginner': ['Selectors','Colors, background, font styles','Box model','Width, height, display','Text alignment and decoration'],
+      'Intermediate': ['Positioning','Flexbox','Grid layout basics','Transitions and simple animations','Pseudo-classes and pseudo-elements'],
+      'Advanced': ['Advanced Grid and Flexbox','Media queries','CSS variables','Advanced animations','CSS frameworks','CSS specificity and inheritance']
+    },
+    JavaScript: {
+      'Beginner': ['Variables','Data types','Basic operators','Conditional statements','Loops','Functions'],
+      'Intermediate': ['DOM manipulation','Events','Array methods','Objects','ES6 features','JSON parsing'],
+      'Advanced': ['Asynchronous JavaScript','Fetch API and AJAX','Modules','Closures and scopes','Prototypes and inheritance','Event delegation','Advanced ES6+ features']
+    },
+    Python: {
+      'Beginner': ['Variables and data types','Basic operators','Input/Output','Conditional statements','Loops','Lists, tuples, sets, dictionaries','Functions'],
+      'Intermediate': ['String methods','List comprehensions','File handling','Modules and imports','Error handling','Classes and basic OOP','Iterators and generators'],
+      'Advanced': ['Advanced OOP','Decorators and context managers','Advanced data structures','Lambda, map, filter, reduce','Regular expressions','Asynchronous programming','Working with APIs and JSON']
+    }
+  }
+      };
+
+     
+
+
+  
+      // Function to display subjects
+      function openSubject(subject) {
+          document.getElementById('subjects').classList.add('hidden');
+          document.getElementById('subjectView').classList.remove('hidden');
+          document.getElementById('lessonView').classList.add('hidden');
+          document.getElementById('subjectTitle').innerText = subject;
+          
+          const list = document.getElementById('categoryList');
+          list.innerHTML = ''; // Clear previous content
+          
+          Object.keys(data[subject]).forEach(category => {
+              const div = document.createElement('div');
+              div.className = 'cursor-pointer bg-slate-700/40 hover:bg-slate-700 p-6 rounded-2xl shadow-lg';
+              div.innerHTML = `<h3 class="text-xl font-semibold">${category}</h3>`;
+              div.onclick = () => openLessonList(subject, category);
+              list.appendChild(div);
+          });
+      }
+  
+      // Function to open lesson topics under selected category
+      function openLessonList(subject, category) {
+          const content = data[subject][category];
+          const lessonContent = document.getElementById('lessonContent');
+          lessonContent.innerHTML = `<h3 class="text-2xl font-bold mb-6">${category}</h3>`;
+          
+          content.forEach(topic => addTopic(topic));
+  
+          document.getElementById('categoryList').classList.add('hidden');
+          document.getElementById('lessonView').classList.remove('hidden');
+      }
+  
+      // Function to add each topic under the selected category
+      function addTopic(topic) {
+          const lessonContent = document.getElementById('lessonContent');
+          const div = document.createElement('div');
+          div.className = 'mb-4 p-4 bg-slate-700/30 rounded-xl cursor-pointer hover:bg-slate-700';
+          div.innerHTML = `
+              <h4 class="text-lg font-semibold">${topic}</h4>
+              <button class="mt-2 bg-indigo-600 px-4 py-2 rounded-lg" onclick="openLesson('${topic}')">Open Lesson</button>
+          `;
+          lessonContent.appendChild(div);
+      }
+  
+      // Function to go back to the subject view
+      function backToSubjects() {
+          document.getElementById('subjectView').classList.add('hidden');
+          document.getElementById('subjects').classList.remove('hidden');
+      }
+  
+      // Function to go back to the category list
+      function backToCategories() {
+          document.getElementById('lessonView').classList.add('hidden');
+          document.getElementById('categoryList').classList.remove('hidden');
+      }
+  
+      // Open lesson details (video, notes, exercises)
+      function openLesson(topic) {
+          // Show the content dynamically based on the topic
+          alert(`Opening content for: ${topic}`);
+          // You can use modals, videos, notes, and exercises here.
+      }
+  </script>
+
+
+
+
+
+
+
+
+
+<script>
+  function openLesson(topic) {
+      let content = '';
+      
+      // Example dynamic content based on the selected topic
+      if (topic === 'Sonlar va amallar') {
+          content = `
+              <h3 class="text-2xl font-bold mb-4">Lesson: ${topic}</h3>
+
+              <!-- Video Section -->
+              <div class="aspect-video mb-4 rounded-2xl overflow-hidden shadow-lg">
+                  <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+              </div>
+
+              <!-- Notes Section -->
+              <div class="bg-slate-700/40 p-6 rounded-2xl mb-4">
+                  <h3 class="text-xl font-semibold mb-2">📌 Quick Notes for ${topic}</h3>
+                  <ul class="list-disc ml-6">
+                      <li>Sonlar va amallar (Numbers and operations)</li>
+                      <li>Basic operations: addition, subtraction, multiplication, division</li>
+                      <li>Important rules: order of operations (PEMDAS)</li>
+                      <li>Common mistakes: Forgetting parentheses in calculations</li>
+                  </ul>
+              </div>
+
+              <div class="bg-slate-700/30 p-4 rounded-xl cursor-pointer hover:bg-slate-700">
+    <h4 class="text-lg font-semibold">${topic}</h4>
+    <!-- Link to exercises.html, passing the topic as a query parameter -->
+    <a href="exercises.html?topic=${encodeURIComponent(topic)}">
+        <button class="mt-2 bg-indigo-600 px-4 py-2 rounded-lg">
+            Start Exercises
+        </button>
+    </a>
+</div>
+          `;
+      }
+
+      else if (topic === 'Butun sonlar') {
+    content = `
+        <h3 class="text-2xl font-bold mb-4">Lesson: ${topic}</h3>
+
+        <!-- Video Section -->
+        <div class="aspect-video mb-4 rounded-2xl overflow-hidden shadow-lg">
+            <iframe class="w-full h-full" src="https://www.youtube.com/embed/AnotherVideoID" allowfullscreen></iframe>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="bg-slate-700/40 p-6 rounded-2xl mb-4">
+            <h3 class="text-xl font-semibold mb-2">📌 Quick Notes for ${topic}</h3>
+            <ul class="list-disc ml-6">
+                <li>'Butun sonlar'</li>
+                <li>How to calculate 'Butun sonlar'</li>
+                <li>'Butun sonlar'</li>
+            </ul>
+        </div>
+
+        <div class="bg-slate-700/30 p-4 rounded-xl cursor-pointer hover:bg-slate-700">
+    <h4 class="text-lg font-semibold">${topic}</h4>
+    <!-- Link to exercises.html, passing the topic as a query parameter -->
+    <a href="exercises.html?topic=${encodeURIComponent(topic)}">
+        <button class="mt-2 bg-indigo-600 px-4 py-2 rounded-lg">
+            Start Exercises
+        </button>
+    </a>
+</div>
+
+    `;
+}
+
+
+
+      
+
+      // For another topic, you can dynamically load different content, for example:
+      else if (topic === 'Kasrlar va o‘nli sonlar') {
+          content = `
+              <h3 class="text-2xl font-bold mb-4">Lesson: ${topic}</h3>
+
+              <!-- Video Section -->
+              <div class="aspect-video mb-4 rounded-2xl overflow-hidden shadow-lg">
+                  <iframe class="w-full h-full" src="https://www.youtube.com/embed/SomeOtherVideoID" allowfullscreen></iframe>
+              </div>
+
+              <!-- Notes Section -->
+              <div class="bg-slate-700/40 p-6 rounded-2xl mb-4">
+                  <h3 class="text-xl font-semibold mb-2">📌 Quick Notes for ${topic}</h3>
+                  <ul class="list-disc ml-6">
+                      <li>Kasrlar va o‘nli sonlar (Fractions and decimal numbers)</li>
+                      <li>How to convert between fractions and decimals</li>
+                      <li>Operations with fractions and decimals</li>
+                  </ul>
+              </div>
+
+              <div class="bg-slate-700/30 p-4 rounded-xl cursor-pointer hover:bg-slate-700">
+    <h4 class="text-lg font-semibold">${topic}</h4>
+    <!-- Link to exercises.html, passing the topic as a query parameter -->
+    <a href="exercises.html?topic=${encodeURIComponent(topic)}">
+        <button class="mt-2 bg-indigo-600 px-4 py-2 rounded-lg">
+            Start Exercises
+        </button>
+    </a>
+</div>
+          `;
+      }
+
+
+      else if (topic === 'Foizlar') {
+    content = `
+        <h3 class="text-2xl font-bold mb-4">Lesson: ${topic}</h3>
+
+        <!-- Video Section -->
+        <div class="aspect-video mb-4 rounded-2xl overflow-hidden shadow-lg">
+            <iframe class="w-full h-full" src="https://www.youtube.com/embed/AnotherVideoID" allowfullscreen></iframe>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="bg-slate-700/40 p-6 rounded-2xl mb-4">
+            <h3 class="text-xl font-semibold mb-2">📌 Quick Notes for ${topic}</h3>
+            <ul class="list-disc ml-6">
+                <li>Foizlar (Percentages)</li>
+                <li>How to calculate percentages</li>
+                <li>Percentage increase and decrease</li>
+            </ul>
+        </div>
+
+        <div class="bg-slate-700/30 p-4 rounded-xl cursor-pointer hover:bg-slate-700">
+    <h4 class="text-lg font-semibold">${topic}</h4>
+    <!-- Link to exercises.html, passing the topic as a query parameter -->
+    <a href="exercises.html?topic=${encodeURIComponent(topic)}">
+        <button class="mt-2 bg-indigo-600 px-4 py-2 rounded-lg">
+            Start Exercises
+        </button>
+    </a>
+</div>
+
+    `;
+}
+
+
+
+      // You can keep adding else if for more topics...
+
+      // Render the content dynamically into the lesson content area
+      document.getElementById('lessonContent').innerHTML = content;
+  }
+</script>
+
+    
+</body>
+</html>
